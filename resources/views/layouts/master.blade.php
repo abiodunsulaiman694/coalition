@@ -10,9 +10,9 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
-        <link rel="stylesheet" type="text/css" href="{{url('css/bootstrap.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url('css/bootstrap.min.css')}}">
 
-        <link rel="stylesheet" type="text/css" href="{{url('css/bootstrap-grid.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url('css/bootstrap-grid.min.css')}}">
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
