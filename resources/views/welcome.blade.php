@@ -1,95 +1,70 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.master')
 
-        <title>Laravel</title>
+@section('content')
+<div id="message"></div>
+{!! Form::open(['method'=>'post', 'id' => 'newProd', 'action' => 'ProductController@store']) !!}
+  <div class="form-group">
+    <label for="name">Product Name</label>
+    <input type="name" class="form-control" id="name" placeholder="Enter Product Name" >
+  </div>
+  <div class="form-group">
+    <label for="quantity">Quantity</label>
+    <input type="number" class="form-control" id="quantity" placeholder="Quantity" required="">
+  </div>
+  <div class="form-group">
+    <label for="price">Price</label>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="">$</span>
+      </div>
+      <input type="text" name="price" id="price" class="form-control" placeholder="Price" required="" >
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Add new Product</button>
+{!! Form::close() !!}
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+<h3>Products</h3>
+<div id="products"></div>
+@stop
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+@section('footer')
+<script>
+    jQuery(document).ready( function( $ ) {
+        loadProducts();
+        $('#newProd').on('submit', function(e) {
+           e.preventDefault(); 
+           var name = $('#name').val();
+           var quantity = $('#quantity').val();
+           var price = $('#price').val();
+           $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+               type: "POST",
+               url: BASE_URL+'/products',
+               data: {name:name, quantity:quantity, price:price},
+               success: function( response ) {
+                $('#message').html('<div class="alert alert-success">New Product created successfully.</div>');
+                $('#name').val('')
+                $('#quantity').val('');
+                loadProducts();
+                   //console.log( response.message );
+               },
+              error: function(data){
+                var errors = data.responseJSON;
+                console.log(errors);
+                // Render the errors with js ...
+              }
+           });
+       });
+    });
+    function loadProducts() {
+        document.getElementById('products').innerHTML = '<div class="text-info text-center">Products loading... Just a moment</div>';
+        $('#products').load(BASE_URL + '/products');
+    }
+    function editProduct(productId, productName) {
+        document.getElementById('modal-title').innerHTML = 'Edit '+ productName;
+        $('#modal-body').load(BASE_URL + '/products/edit/'+productId);
+    }
+</script>
+@stop
