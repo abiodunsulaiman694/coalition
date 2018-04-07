@@ -51,7 +51,7 @@ class ProductController extends Controller
             $product = new Product();
             $product->name = $request->name;
             $product->quantity = $this->clean_numbers($request->quantity);
-            $product->price = $this->clean_numbers($request->price*100); //save price in penies
+            $product->price = $this->clean_numbers($request->price)*100; //save price in penies
             $product->save();
             return response()->json([
                   'product' => $product,
@@ -105,7 +105,7 @@ class ProductController extends Controller
             $product = Product::findOrFail($id);
             $product->name = $request->name;
             $product->quantity = $this->clean_numbers($request->quantity);
-            $product->price = $this->clean_numbers($request->price*100); //save price in penies
+            $product->price = $this->clean_numbers($request->price)*100; //save price in penies
             $product->save();
             return response()->json([
                   'product' => $product,
